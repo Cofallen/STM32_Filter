@@ -4,12 +4,16 @@
 #include "dac.h"
 #include "stm32f4xx_hal_dac.h"
 #include "dwt.h"
+#include "math.h"
 
-uint32_t dac_value = 0;
-/* 可调电压 */
+/**
+ * @brief  设置DAC输出电压
+ * @param  voltage 期望输出电压 (0.0f ~ 3.3f)
+ * @retval 实际好像有0.1V的误差
+ */
 void setVoltage(float voltage)
 {
-    dac_value = (uint32_t)((voltage / 3.3f) * 4095);
+    uint16_t dac_value = (uint32_t)((voltage / 3.3f) * 4095);
     HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_value);
 }
 
@@ -21,7 +25,7 @@ void setVoltage(float voltage)
  * @param  frequency 方波的频率
  * @retval 无
  */
-void Frequency_square_wave(uint16_t maxval, uint16_t frequency)
+void Frequency_square_wave(uint16_t maxval, float frequency)
 {
     HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, maxval);
     DWT_Delay_us(1000000 / (1 * frequency));  // 半周期延时 ,好像这个延时有问题，理论应该是500000 / frequency
@@ -29,7 +33,7 @@ void Frequency_square_wave(uint16_t maxval, uint16_t frequency)
     DWT_Delay_us(1000000 / (1 * frequency));
 }
 
-// 梯形波
+
 /**
  * @brief  产生频率梯形波
  * @note   梯形波频率存在局限性！
@@ -38,7 +42,7 @@ void Frequency_square_wave(uint16_t maxval, uint16_t frequency)
  * @param  bandpass  上升/下降沿的采样点数
  * @retval 时间并不精确
  */
-void Frequency_triangle_wave(uint16_t maxval, uint16_t frequency, uint32_t bandpass)
+void Frequency_triangle_wave(uint16_t maxval, float frequency, uint32_t bandpass)
 {
     uint32_t step = maxval / bandpass;
     // 上升沿
@@ -68,7 +72,7 @@ void Frequency_triangle_wave(uint16_t maxval, uint16_t frequency, uint32_t bandp
  * @param  bandpass  单边梯度持续比例
  * @retval 无
  */
-void Frequency_triangle_wave2(uint16_t maxval, uint16_t frequency, float rate)
+void Frequency_triangle_wave2(uint16_t maxval, float frequency, float rate)
 {
     // uint32_t step = maxval / (bandpass * rate);
     float bandpass_time = 1.0f / frequency * rate * 1000000; // us
@@ -92,4 +96,38 @@ void Frequency_triangle_wave2(uint16_t maxval, uint16_t frequency, float rate)
     }
     DWT_Delay_us((uint32_t)con_time);
 
+}
+
+
+/**
+ * @brief  产生频率正弦波
+ * @note   正弦波频率存在局限性！
+ * @param  maxval    最大值 (0 < maxval < 4095)
+ * @param  frequency 正弦波的频率
+ * @param  samples   一个周期的采样点数
+ * @retval 无
+ */
+void Frequency_sin_wave(uint16_t maxval, float frequency, uint16_t samples)
+{
+    uint16_t time = 1.0f / frequency * 1000000;
+    float delta = 2 * PI / samples;
+    float delta_time = time / samples;
+    for (int i = 0; i < samples; i++)
+    {
+        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, maxval * sin(delta * i) + maxval);
+        DWT_Delay_us((uint32_t)delta_time);
+    }
+}
+
+/**
+ * @brief  产生频率三角波
+ * @note   三角波频率存在局限性！
+ * @param  maxval    最大值 (0 < maxval < 4095)
+ * @param  frequency 三角波的频率
+ * @param  samples   一个周期的采样点数
+ * @retval 无
+ */
+void Frequency_triangle_wave3(uint16_t maxval, float frequency)
+{
+    Frequency_triangle_wave2(maxval, frequency, 0.5f);
 }

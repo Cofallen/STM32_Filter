@@ -111,7 +111,9 @@ int main(void)
     // setVoltage(3.3f);
     // Frequency_square_wave(2048,1);
     // Frequency_triangle_wave(4095, 1, 500);
-    Frequency_triangle_wave2(4095, 1, 0.1f);
+    // Frequency_triangle_wave2(4095, 1, 0.1f);
+    // Frequency_sin_wave(2048, 1.0f, 1000);
+    Frequency_triangle_wave3(4095, 1.0f);
   }
   /* USER CODE END 3 */
 }
