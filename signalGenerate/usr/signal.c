@@ -139,3 +139,23 @@ void Frequency_noise_wave(uint16_t maxval)
     val = rand() % maxval;
     HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, val);
 }
+
+/**
+ * @brief  产生频率正弦噪声波
+ * 
+ * @param maxval    最大值 (0 < maxval < 4095)
+ * @param frequency 正弦噪声波的频率
+ * @param samples   一个周期的采样点数
+ * @retval 杂波为100倍主频率
+ */
+void Frequency_sinNoise_wave(uint16_t maxval, float frequency, uint16_t samples)
+{
+    uint16_t time = 1.0f / frequency * 1000000;
+    float delta = 2 * PI / samples;
+    float delta_time = time / samples;
+    for (int i = 0; i < samples; i++)
+    {
+        HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, maxval * sin(delta * i) + maxval + 100 * sin(delta * 100 * i));
+        DWT_Delay_us((uint32_t)delta_time);
+    }
+}
