@@ -113,8 +113,8 @@ int main(void)
     // Frequency_triangle_wave(4095, 1, 500);
     // Frequency_triangle_wave2(4095, 1, 0.1f);
     // Frequency_sin_wave(2048, 1.0f, 1000);
-    // Frequency_triangle_wave3(4095, 1.0f);
-    Frequency_noise_wave(4095);
+    Frequency_triangle_wave3(4095, 1.0f);
+    // Frequency_noise_wave(4095);
   }
   /* USER CODE END 3 */
 }

@@ -5,6 +5,7 @@
 #include "stm32f4xx_hal_dac.h"
 #include "dwt.h"
 #include "math.h"
+#include "stdlib.h"
 
 /**
  * @brief  设置DAC输出电压
