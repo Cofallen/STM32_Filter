@@ -13,5 +13,6 @@ void Frequency_triangle_wave(uint16_t maxval, float frequency, uint32_t bandpass
 void Frequency_triangle_wave2(uint16_t maxval, float frequency, float rate);
 void Frequency_sin_wave(uint16_t maxval, float frequency, uint16_t samples);
 void Frequency_triangle_wave3(uint16_t maxval, float frequency);
+void Frequency_noise_wave(uint16_t maxval);
 
 #endif // !__SIGNAL_H__

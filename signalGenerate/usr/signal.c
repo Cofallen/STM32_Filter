@@ -131,3 +131,10 @@ void Frequency_triangle_wave3(uint16_t maxval, float frequency)
 {
     Frequency_triangle_wave2(maxval, frequency, 0.5f);
 }
+
+void Frequency_noise_wave(uint16_t maxval)
+{
+    int val = 0;
+    val = rand() % maxval;
+    HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, val);
+}
